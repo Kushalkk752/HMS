@@ -1,6 +1,7 @@
 package com.hms.controller;
 
 import com.hms.payload.LoginDto;
+import com.hms.payload.TokenDto;
 import com.hms.service.LoginService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,15 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> createLogin(
+    public ResponseEntity<?> createLogin(
             @RequestBody LoginDto dto
     ){
         String token = loginService.verifyLogin(dto);
         if(token!=null){
-            return new ResponseEntity<>(token,HttpStatus.OK);
+            TokenDto tokenDto = new TokenDto();
+            tokenDto.setToken(token);
+            tokenDto.setType("JWT");
+            return new ResponseEntity<>(tokenDto,HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>("Invalid Username/Password",HttpStatus.FORBIDDEN);
